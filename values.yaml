@@ -58,7 +58,8 @@ runnerRegistrationToken: "Xv78sZXfVWs71kptP9SB"
 ## non-existant runners. Un-registering the runner before termination mitigates this issue.
 ## ref: https://docs.gitlab.com/runner/commands/README.html#gitlab-runner-unregister
 ##
-# unregisterRunners: true
+# 终止前注销所有runner
+unregisterRunners: true
 
 ## When stopping the runner, give it time to wait for its jobs to terminate.
 ##
@@ -66,6 +67,7 @@ runnerRegistrationToken: "Xv78sZXfVWs71kptP9SB"
 ## to be terminated with a graceful stop request. terminationGracePeriodSeconds
 ## instructs Kubernetes to wait long enough for the runner pod to terminate gracefully.
 ## ref: https://docs.gitlab.com/runner/commands/#signals
+# 停止管道时等待停止作业的时间
 terminationGracePeriodSeconds: 3600
 
 ## Set the certsSecretName in order to pass custom certficates for GitLab Runner to use
@@ -78,17 +80,19 @@ terminationGracePeriodSeconds: 3600
 ## Configure the maximum number of concurrent jobs
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
 ##
+# 最大并发job数量
 concurrent: 10
 
 ## Defines in seconds how often to check GitLab for a new builds
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
 ##
+# 新job检查间隔
 checkInterval: 30
 
 ## Configure GitLab Runner's logging level. Available values are: debug, info, warn, error, fatal, panic
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
 ##
-# logLevel:
+logLevel: info
 
 ## Configure GitLab Runner's logging format. Available values are: runner, text, json
 ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-global-section
@@ -112,8 +116,8 @@ rbac:
 
   ## Define specific rbac permissions.
   ## DEPRECATED: see .Values.rbac.rules
-  # resources: ["pods", "pods/exec", "secrets"]
-  # verbs: ["get", "list", "watch", "create", "patch", "delete"]
+  resources: ["pods", "pods/exec", "secrets"]
+  verbs: ["get", "list", "watch", "create", "patch", "delete"]
 
   ## Define list of rules to be added to the rbac role permissions.
   ## Each rule supports the keys:
@@ -206,23 +210,24 @@ runners:
   ## Specify the image pull policy: never, if-not-present, always. The cluster default will be used if not set.
   ##
   ## DEPRECATED: See https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration
-  # imagePullPolicy: ""
+  imagePullPolicy: "if-not-present"
 
   ## Defines number of concurrent requests for new job from GitLab
   ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runners-section
   ##
   ## DEPRECATED: See https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration
-  # requestConcurrency: 1
+  # 限制来自GitLab的对新作业的并发请求数
+  requestConcurrency: 1
 
   ## Specify whether the runner should be locked to a specific project: true, false. Defaults to true.
   ##
-  # locked: true
+  locked: false
 
   ## Specify the tags associated with the runner. Comma-separated list of tags.
   ##
   ## ref: https://docs.gitlab.com/ce/ci/runners/#use-tags-to-limit-the-number-of-jobs-using-the-runner
   ##
-  # tags: ""
+  tags: "kubernetes-runner,k8s"
 
   ## Specify the name for the runner.
   ##
@@ -234,14 +239,14 @@ runners:
   ##
   ## ref: https://docs.gitlab.com/ce/ci/runners/#runner-is-allowed-to-run-untagged-jobs
   ##
-  # runUntagged: true
+  runUntagged: true
 
   ## Specify whether the runner should only run protected branches.
   ## Defaults to False.
   ##
   ## ref: https://docs.gitlab.com/ee/ci/runners/#prevent-runners-from-revealing-sensitive-information
   ##
-  # protected: true
+  protected: false
 
   ## Run all containers with the privileged flag enabled
   ## This will allow the docker:dind image to run if you need to run Docker
@@ -249,7 +254,7 @@ runners:
   ## ref: https://docs.gitlab.com/runner/executors/kubernetes.html#using-dockerdind
   ##
   ## DEPRECATED: See https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration
-  # privileged: false
+  privileged: true
 
   ## The name of the secret containing runner-token and runner-registration-token
   # secret: gitlab-runner
@@ -263,12 +268,12 @@ runners:
   ## timeout attempting to connect to the container it has just created.
   ## ref: https://docs.gitlab.com/runner/executors/kubernetes.html
   ## DEPRECATED: See https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration
-  # pollTimeout: 180
+  pollTimeout: 180
 
   ## Set maximum build log size in kilobytes, by default set to 4096 (4MB)
   ## ref: https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runners-section
   ## DEPRECATED: See https://docs.gitlab.com/runner/install/kubernetes.html#additional-configuration
-  # outputLimit: 4096
+  outputLimit: 4096
 
   ## Distributed runners caching
   ## ref: https://docs.gitlab.com/runner/configuration/autoscale.html#distributed-runners-caching
